@@ -39,13 +39,8 @@
 
 <script>
 import PhoneNumber from 'awesome-phonenumber';
-import utils, { getCountry, setCaretPosition } from './utils';
-
-function getDefault(key) {
-  const value = utils.options[key];
-  if (typeof value === 'undefined') return utils.options[key];
-  return value;
-}
+import { getCountry, setCaretPosition } from './utils';
+import allCountries from './all-countries';
 
 // Polyfill for Event.path in IE 11: https://stackoverflow.com/a/46093727
 function getParents(node, memo) {
@@ -93,16 +88,16 @@ export default {
   props: {
     value: { type: String, default: '' },
     selectCountryLabel: { type: String, default: '' },
-    disabledFetchingCountry: { type: Boolean, default: () => getDefault('disabledFetchingCountry') },
+    disabledFetchingCountry: { type: Boolean, default: false },
     disabledSelectCountry: { type: Boolean, default: false },
-    mode: { type: String, default: () => getDefault('mode') },
-    allCountries: { type: Array, default: () => getDefault('allCountries') },
-    defaultCountry: { type: String, default: () => getDefault('defaultCountry') },
-    preferredCountries: { type: Array, default: () => getDefault('preferredCountries') },
-    onlyCountries: { type: Array, default: () => getDefault('onlyCountries') },
-    ignoredCountries: { type: Array, default: () => getDefault('ignoredCountries') },
-    wrapperClasses: { type: [String, Array, Object], default: () => getDefault('wrapperClasses') },
-    inputOptions: { type: Object, default: () => getDefault('inputOptions') }
+    mode: { type: String, default: '' },
+    allCountries: { type: Array, default: () => allCountries },
+    defaultCountry: { type: String, default: '' },
+    preferredCountries: { type: Array, default: () => [] },
+    onlyCountries: { type: Array, default: () => [] },
+    ignoredCountries: { type: Array, default: () => [] },
+    wrapperClasses: { type: [String, Array, Object], default: '' },
+    inputOptions: { type: Object, default: () => {} }
   },
   data: () => ({
     phone: '',
