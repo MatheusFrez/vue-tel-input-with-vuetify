@@ -3,11 +3,15 @@
     <v-row justify="center">
       <v-col cols="6">
         <vue-tel-input-vuetify
+          ref="tel"
           v-model="myPhone"
-          :valid-characters-only="true"
-          :default-country="'br'"
+          v-bind="$attrs"
+          :placeholder="placeholder"
+          :only-countries="onlyCountries"
+          default-country="br"
           select-label="Code"
           @input="onInput"
+          @country-changed="changeCountry($event)"
         />
       </v-col>
     </v-row>
@@ -49,17 +53,23 @@ export default {
   },
   data: () => ({
     myPhone: '',
+    placeholder: 'Put your cellphone number here',
     phone: {
       number: '',
       valid: false,
       country: undefined
-    }
+    },
+    onlyCountries: ['br', 'ar', 'cl', 'co', 'mx', 'es', 'uy'],
+    selectedCountry: {}
   }),
   methods: {
     onInput(formattedNumber, phoneObject) {
       this.phone.number = ((phoneObject || {}).number || {}).international || '';
       this.phone.valid = (phoneObject || {}).valid;
       this.phone.country = ((phoneObject || {}).country || {}).name;
+    },
+    changeCountry(country) {
+      this.selectedCountry = country;
     }
   }
 };

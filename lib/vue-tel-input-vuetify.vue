@@ -43,9 +43,7 @@ import utils, { getCountry, setCaretPosition } from './utils';
 
 function getDefault(key) {
   const value = utils.options[key];
-  if (typeof value === 'undefined') {
-    return utils.options[key];
-  }
+  if (typeof value === 'undefined') return utils.options[key];
   return value;
 }
 
@@ -53,9 +51,7 @@ function getDefault(key) {
 function getParents(node, memo) {
   const parsedMemo = memo || [];
   const { parentNode } = node;
-  if (!parentNode) {
-    return parsedMemo;
-  }
+  if (!parentNode) return parsedMemo;
   return getParents(parentNode, parsedMemo.concat(parentNode));
 }
 
@@ -112,7 +108,6 @@ export default {
     phone: '',
     activeCountry: { iso2: '' },
     open: false,
-    finishMounted: false,
     selectedIndex: null,
     typeToFindInput: '',
     typeToFindTimer: null,
@@ -215,8 +210,7 @@ export default {
         this.countryCode = this.activeCountry;
         this.$emit('validate', this.phoneObject);
       })
-      .catch(console.error)
-      .finally(() => (this.finishMounted = true));
+      .catch(console.error);
   },
   created() {
     if (this.value) this.phone = this.value.trim();
