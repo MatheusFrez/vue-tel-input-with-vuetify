@@ -5,6 +5,7 @@
         :label="selectCountryLabel"
         v-model="countryCode"
         @change="onChangeCountryCode"
+        v-bind="$attrs"
         :items="sortedCountries"
         :disabled="disabledSelectCountry"
         item-text="name"
