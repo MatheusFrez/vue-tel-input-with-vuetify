@@ -1,4 +1,4 @@
-# vue-tel-input-vuetify
+# vue-telephone-input-vuetify
 International Telephone Input with Vuetify.
 
 <p align="center">
@@ -22,7 +22,7 @@ International Telephone Input with Vuetify.
 
 ### Example Repository
 
-You might want to follow and use the basic example usage of this library in this repository [Example](https://github.com/yogakurniawan/vue-tel-input-vuetify-example)
+You might want to follow and use the basic example usage of this library in this repository [Example](https://github.com/MatheusFrez/vue-telephone-input-with-vuetify)
 
 OR try from scratch with below steps
 
@@ -42,10 +42,10 @@ OR try from scratch with below steps
 ```
 
 ### npm
-- install `vue-tel-input-vuetify` to newly created vue project
+- install `vue-telephone-input-vuetify` to newly created vue project
 
 ```bash
-  npm install vue-tel-input-vuetify
+  npm i vue-telephone-input-vuetify
 ```
 
 Install the plugin into Vue:
@@ -57,7 +57,7 @@ With vuetify loader:
 
   "transpileDependencies": [
     "vuetify",
-    "vue-tel-input-vuetify"
+    "vue-telephone-input-vuetify"
   ]
 ```
 
@@ -74,24 +74,6 @@ With vuetify loader:
 
 ```
 
-```javascript
-// src/main.js
-
-import Vue from 'vue';
-import vuetify from "@/plugins/vuetify";
-import VueTelInputVuetify from 'vue-tel-input-vuetify/lib';
-
-Vue.use(VueTelInputVuetify, {
-  vuetify,
-});
-
-new Vue({
-  vuetify,
-  render: (h) => h(App),
-}).$mount("#app");
-
-```
-
 Without vuetify loader:
 
 ```javascript
@@ -99,7 +81,7 @@ Without vuetify loader:
 
   "transpileDependencies": [
     "vuetify",
-    "vue-tel-input-vuetify"
+    "vue-telephone-input-vuetify"
   ]
 ```
 
@@ -121,10 +103,10 @@ Without vuetify loader:
 // src/main.js
 
 import Vue from 'vue';
-import VueTelInputVuetify from "vue-tel-input-vuetify";
+import VueTelephoneInputVuetify from 'vue-telephone-input-vuetify/lib';
 import vuetify from "./plugins/vuetify";
 
-Vue.use(VueTelInputVuetify, {
+Vue.use(VueTelephoneInputVuetify, {
   vuetify,
 });
 
@@ -137,11 +119,11 @@ new Vue({
 
 > View all available options in [Props](#props).
 
-Use the `vue-tel-input-vuetify` component:
+Use the `vue-telephone-input-vuetify` component:
 
   ```html
   <template>
-    <vue-tel-input-vuetify v-model="phone"></vue-tel-input-vuetify>
+    <vue-telephone-input-vuetify v-model="phone"></vue-telephone-input-vuetify>
   <template>
 
   <script>
