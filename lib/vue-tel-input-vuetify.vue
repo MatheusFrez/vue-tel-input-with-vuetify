@@ -11,6 +11,7 @@
         item-text="name"
         item-value="iso2"
         return-object
+        :clearable="false"
       >
         <template v-slot:selection>
           <div :class="activeCountry.iso2.toLowerCase()" class="vti__flag" />
