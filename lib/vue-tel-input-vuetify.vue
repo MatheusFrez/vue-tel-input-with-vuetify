@@ -293,7 +293,9 @@ export default {
         // Reset phone if the showDialCode is set
         this.phone = `+${country.dialCode}`;
       }
-      if (toEmitInputEvent) this.$emit('input', this.phoneText, this.phoneObject);
+      if (toEmitInputEvent) {
+        if (this.phoneText) this.$emit('input', this.phoneText, this.phoneObject);
+      }
     },
     onInput(e) {
       // Returns response.number to assign it to v-model (if being used)
