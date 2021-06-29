@@ -170,7 +170,7 @@ export default {
     // eslint-disable-next-line func-names
     'phoneObject.valid': function(value) {
       if (value) this.phone = this.phoneText;
-      this.$emit('validate', this.phoneObject);
+      if (this.phoneObject) this.$emit('validate', this.phoneObject);
     },
     value() {
       this.phone = this.value;
@@ -205,7 +205,7 @@ export default {
           this.phone = `+${this.activeCountry.dialCode}`;
         }
         this.countryCode = this.activeCountry;
-        this.$emit('validate', this.phoneObject);
+        if (this.phoneObject) this.$emit('validate', this.phoneObject);
       })
       .catch(console.error);
   },
