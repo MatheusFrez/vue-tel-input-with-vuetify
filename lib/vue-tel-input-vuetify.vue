@@ -31,6 +31,7 @@
       v-on="$listeners"
       @input="onInput"
       @change="onChange"
+      :rules="rules"
     >
       <template #message="{ key, message }">
         <slot name="label" v-bind="{ key, message }" />
@@ -98,6 +99,7 @@ export default {
     preferredCountries: { type: Array, default: () => [] },
     onlyCountries: { type: Array, default: () => [] },
     ignoredCountries: { type: Array, default: () => [] },
+    rules: { type: Array, default: () => [] },
     wrapperClasses: { type: [String, Array, Object], default: '' },
     inputOptions: { type: Object, default: () => {} }
   },
@@ -170,7 +172,7 @@ export default {
     // eslint-disable-next-line func-names
     'phoneObject.valid': function(value) {
       if (value) this.phone = this.phoneText;
-      if (this.phoneObject) this.$emit('validate', this.phoneObject);
+      this.$emit('validate', this.phoneObject);
     },
     value() {
       this.phone = this.value;
@@ -207,7 +209,7 @@ export default {
           this.phone = `+${this.activeCountry.dialCode}`;
         }
         this.countryCode = this.activeCountry;
-        if (this.phoneObject) this.$emit('validate', this.phoneObject);
+        this.$emit('validate', this.phoneObject);
       })
       .catch(console.error);
   },
@@ -295,17 +297,13 @@ export default {
         // Reset phone if the showDialCode is set
         this.phone = `+${country.dialCode}`;
       }
-      if (toEmitInputEvent) {
-        this.$emit('input', this.phoneText, this.phoneObject);
-        this.$emit('onInput', this.phoneObject); // Deprecated
-      }
+      if (toEmitInputEvent) this.$emit('input', this.phoneText, this.phoneObject);
     },
     onInput(e) {
       // Returns response.number to assign it to v-model (if being used)
       // Returns full response for cases @input is used
       // and parent wants to return the whole response.
       this.$emit('input', this.phoneText, this.phoneObject);
-      this.$emit('onInput', this.phoneObject); // Deprecated
       // Keep the current cursor position just in case the input reformatted
       // and it gets moved to the last character.
       if (e && e.target) this.cursorPosition = e.target.selectionStart;

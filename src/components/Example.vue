@@ -5,13 +5,13 @@
         <vue-tel-input-vuetify
           ref="tel"
           v-model="myPhone"
-          v-bind="$attrs"
           :placeholder="placeholder"
           :only-countries="onlyCountries"
           default-country="br"
           select-label="Code"
           @input="onInput"
           @country-changed="changeCountry($event)"
+          :rules="[(v) => this.validate(v)]"
         />
       </v-col>
     </v-row>
@@ -45,6 +45,7 @@
 
 <script>
 import VueTelInputVuetify from '../../lib/vue-tel-input-vuetify.vue';
+import PhoneNumber from 'awesome-phonenumber';
 
 export default {
   name: 'Example',
@@ -53,6 +54,7 @@ export default {
   },
   data: () => ({
     myPhone: '',
+    country: 'BR',
     placeholder: 'Put your cellphone number here',
     phone: {
       number: '',
@@ -64,13 +66,16 @@ export default {
   }),
   methods: {
     onInput(formattedNumber, phoneObject) {
-      console.log('FORMATTED NUMBER', formattedNumber);
       this.phone.number = ((phoneObject || {}).number || {}).international || '';
       this.phone.valid = (phoneObject || {}).valid;
       this.phone.country = ((phoneObject || {}).country || {}).name;
     },
     changeCountry(country) {
       this.selectedCountry = country;
+    },
+    validate(v) {
+      const pn = new PhoneNumber(v, this.country);
+      return (v && ((pn || {}).a || {}).valid) || 'Telephone invalid';
     }
   }
 };
