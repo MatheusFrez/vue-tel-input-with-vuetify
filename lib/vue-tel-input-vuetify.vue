@@ -192,7 +192,7 @@ export default {
         this.$nextTick(() => setCaretPosition(this.$refs.input, this.cursorPosition));
       }
 
-      if (this.phoneText) this.$emit('input', this.phoneText, this.phoneObject);
+      if (this.phoneText && this.phoneObject) this.$emit('input', this.phoneText, this.phoneObject);
     },
     activeCountry(value) {
       if (value && value.iso2) this.$emit('country-changed', value);
@@ -294,14 +294,14 @@ export default {
         this.phone = `+${country.dialCode}`;
       }
       if (toEmitInputEvent) {
-        if (this.phoneText) this.$emit('input', this.phoneText, this.phoneObject);
+        if (this.phoneText && this.phoneObject) this.$emit('input', this.phoneText, this.phoneObject);
       }
     },
     onInput(e) {
       // Returns response.number to assign it to v-model (if being used)
       // Returns full response for cases @input is used
       // and parent wants to return the whole response.
-      if (this.phoneText) this.$emit('input', this.phoneText, this.phoneObject);
+      if (this.phoneText && this.phoneObject) this.$emit('input', this.phoneText, this.phoneObject);
       // Keep the current cursor position just in case the input reformatted
       // and it gets moved to the last character.
       if (e && e.target) this.cursorPosition = e.target.selectionStart;
