@@ -192,7 +192,7 @@ export default {
         this.$nextTick(() => setCaretPosition(this.$refs.input, this.cursorPosition));
       }
 
-      this.$emit('input', this.phoneText, this.phoneObject);
+      if (this.phoneText) this.$emit('input', this.phoneText, this.phoneObject);
     },
     activeCountry(value) {
       if (value && value.iso2) this.$emit('country-changed', value);
