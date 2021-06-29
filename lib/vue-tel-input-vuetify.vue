@@ -299,13 +299,13 @@ export default {
       // Returns response.number to assign it to v-model (if being used)
       // Returns full response for cases @input is used
       // and parent wants to return the whole response.
-      this.$emit('input', this.phoneText, this.phoneObject);
+      if (this.phoneText) this.$emit('input', this.phoneText, this.phoneObject);
       // Keep the current cursor position just in case the input reformatted
       // and it gets moved to the last character.
       if (e && e.target) this.cursorPosition = e.target.selectionStart;
     },
     onChange(value) {
-      this.$emit('change', value);
+      if (value) this.$emit('change', value);
     },
     focus() {
       this.$refs.input.focus();
