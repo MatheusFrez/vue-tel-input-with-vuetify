@@ -64,6 +64,7 @@ export default {
   }),
   methods: {
     onInput(formattedNumber, phoneObject) {
+      console.log('FORMATTED NUMBER', formattedNumber);
       this.phone.number = ((phoneObject || {}).number || {}).international || '';
       this.phone.valid = (phoneObject || {}).valid;
       this.phone.country = ((phoneObject || {}).country || {}).name;
