@@ -5,7 +5,7 @@
         :label="selectCountryLabel"
         v-model="countryCode"
         @change="onChangeCountryCode"
-        v-bind="$attrs"
+        v-bind="attrsToSelectField"
         :items="sortedCountries"
         :disabled="disabledSelectCountry"
         item-text="name"
@@ -31,7 +31,6 @@
       v-on="$listeners"
       @input="onInput"
       @change="onChange"
-      :rules="rules"
     >
       <template #message="{ key, message }">
         <slot name="label" v-bind="{ key, message }" />
@@ -99,7 +98,6 @@ export default {
     preferredCountries: { type: Array, default: () => [] },
     onlyCountries: { type: Array, default: () => [] },
     ignoredCountries: { type: Array, default: () => [] },
-    rules: { type: Array, default: () => [] },
     wrapperClasses: { type: [String, Array, Object], default: '' },
     inputOptions: { type: Object, default: () => {} }
   },
@@ -114,6 +112,11 @@ export default {
     countryCode: null
   }),
   computed: {
+    attrsToSelectField() {
+      let attrsReady = { ...this.$attrs };
+      delete attrsReady['rules'];
+      return attrsReady;
+    },
     parsedMode() {
       if (this.mode) {
         if (!['international', 'national'].includes(this.mode)) {

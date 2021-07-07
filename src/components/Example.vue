@@ -9,6 +9,8 @@
           :only-countries="onlyCountries"
           default-country="br"
           select-label="Code"
+          outlined
+          disabled-fetching-country
           @input="onInput"
           @country-changed="changeCountry($event)"
           :rules="[(v) => this.validate(v)]"
