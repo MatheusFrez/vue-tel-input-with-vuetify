@@ -1,25 +1,23 @@
 <template>
   <v-container>
-    <v-row justify="center">
+    <v-row justify="center" no-gutters>
       <v-col cols="6">
         <vue-tel-input-vuetify
           ref="tel"
           v-model="myPhone"
           :placeholder="placeholder"
-          :only-countries="onlyCountries"
           default-country="br"
           select-label="Code"
           outlined
-          disabled-fetching-country
           :rules="[(v) => validate(v)]"
           @input="onInput"
           @country-changed="changeCountry($event)"
         />
       </v-col>
     </v-row>
-    <v-row justify="center">
+    <v-row v-if="(phone || {}).number" justify="center" no-gutters>
       <v-col cols="6">
-        <div v-if="(phone || {}).number" style="color: #e83e8c">
+        <div style="color: #e83e8c">
           <span>
             Number:
             <strong>{{ (phone || {}).number }}</strong
@@ -37,8 +35,8 @@
         </div>
       </v-col>
     </v-row>
-    <v-row justify="center">
-      <v-col cols="6">
+    <v-row justify="center" no-gutters>
+      <v-col cols="6" class="mt-4">
         <v-btn @click="myPhone = '+55 22999999999'">Set phone</v-btn>
       </v-col>
     </v-row>

@@ -41,7 +41,6 @@
 
 <script>
 import PhoneNumber from 'awesome-phonenumber';
-import { getCountry } from './utils';
 import allCountries from './all-countries';
 
 export default {
@@ -49,11 +48,10 @@ export default {
   props: {
     value: { type: String, default: '' },
     selectCountryLabel: { type: String, default: '' },
-    disabledFetchingCountry: { type: Boolean, default: false },
     disabledSelectCountry: { type: Boolean, default: false },
     mode: { type: String, default: '' },
     allCountries: { type: Array, default: () => allCountries },
-    defaultCountry: { type: String, default: 'br' },
+    defaultCountry: { type: String, default: '' },
     preferredCountries: { type: Array, default: () => [] },
     onlyCountries: { type: Array, default: () => [] },
     ignoredCountries: { type: Array, default: () => [] },
@@ -73,12 +71,10 @@ export default {
     },
     parsedMode() {
       if (this.mode) {
-        if (!['international', 'national'].includes(this.mode)) {
-          console.error('Invalid value of prop "mode"');
-        } else {
-          return this.mode;
-        }
+        if (!['international', 'national'].includes(this.mode)) console.error('Invalid value of prop "mode"');
+        else return this.mode;
       }
+
       if (!this.phone || this.phone[0] !== '+') return 'national';
 
       return 'international';
@@ -183,22 +179,11 @@ export default {
             return resolve();
           }
         }
+
         const fallbackCountry = this.findCountry(this.preferredCountries[0]) || this.filteredCountries[0];
 
-        if (!this.disabledFetchingCountry) {
-          getCountry()
-            .then((res) => {
-              if (this.phone === '') this.activeCountry = this.findCountry(res) || this.activeCountry;
-            })
-            .catch((error) => {
-              console.warn(error);
-              this.choose(fallbackCountry);
-            })
-            .finally(() => resolve());
-        } else {
-          this.choose(fallbackCountry);
-          return resolve();
-        }
+        this.choose(fallbackCountry);
+        return resolve();
       });
     },
     /**
@@ -231,9 +216,6 @@ export default {
     },
     onChange(value) {
       if (value) this.$emit('change', value);
-    },
-    focus() {
-      this.$refs.input.focus();
     },
     onChangeCountryCode() {
       this.choose(this.countryCode, true);
