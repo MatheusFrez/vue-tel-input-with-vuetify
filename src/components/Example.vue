@@ -11,9 +11,9 @@
           select-label="Code"
           outlined
           disabled-fetching-country
+          :rules="[(v) => validate(v)]"
           @input="onInput"
           @country-changed="changeCountry($event)"
-          :rules="[(v) => this.validate(v)]"
         />
       </v-col>
     </v-row>

@@ -2,9 +2,8 @@
   <div :class="['vue-tel-input-vuetify', wrapperClasses]">
     <div class="country-code">
       <v-select
-        :label="selectCountryLabel"
         v-model="countryCode"
-        @change="onChangeCountryCode"
+        :label="selectCountryLabel"
         v-bind="attrsToSelectField"
         :items="sortedCountries"
         :disabled="disabledSelectCountry"
@@ -12,6 +11,7 @@
         item-value="iso2"
         return-object
         :clearable="false"
+        @change="onChangeCountryCode"
       >
         <template v-slot:selection>
           <div :class="activeCountry.iso2.toLowerCase()" class="vti__flag" />
@@ -24,9 +24,9 @@
     </div>
     <v-text-field
       ref="input"
+      v-model="phone"
       type="tel"
       :value="value"
-      v-model="phone"
       v-bind="$attrs"
       v-on="$listeners"
       @input="onInput"
