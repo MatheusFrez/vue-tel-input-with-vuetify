@@ -71,6 +71,7 @@ export default {
       this.phone.number = ((phoneObject || {}).number || {}).international || '';
       this.phone.valid = (phoneObject || {}).valid;
       this.phone.country = ((phoneObject || {}).country || {}).name;
+      this.country = (this.selectedCountry || {}).iso2;
     },
     changeCountry(country) {
       this.selectedCountry = country;

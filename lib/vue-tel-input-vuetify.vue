@@ -13,7 +13,7 @@
         :clearable="false"
         @change="onChangeCountryCode"
       >
-        <template v-slot:selection>
+        <template #selection>
           <div :class="activeCountry.iso2.toLowerCase()" class="vti__flag" />
         </template>
         <template v-slot:item="data">
@@ -41,52 +41,11 @@
 
 <script>
 import PhoneNumber from 'awesome-phonenumber';
-import { getCountry, setCaretPosition } from './utils';
+import { getCountry } from './utils';
 import allCountries from './all-countries';
-
-// Polyfill for Event.path in IE 11: https://stackoverflow.com/a/46093727
-function getParents(node, memo) {
-  const parsedMemo = memo || [];
-  const { parentNode } = node;
-  if (!parentNode) return parsedMemo;
-  return getParents(parentNode, parsedMemo.concat(parentNode));
-}
 
 export default {
   name: 'VueTelInputVuetify',
-  directives: {
-    // Click-outside by BosNaufal: https://github.com/BosNaufal/vue-click-outside
-    'click-outside': {
-      bind(el, binding, vNode) {
-        // Provided expression must evaluate to a function.
-        if (typeof binding.value !== 'function') {
-          const compName = vNode.context.name;
-          let warn = `[Vue-click-outside:] provided expression ${binding.expression} is not a function, but has to be`;
-          if (compName) {
-            warn += `Found in component ${compName}`;
-          }
-          console.warn(warn);
-        }
-        // Define Handler and cache it on the element
-        const { bubble } = binding.modifiers;
-        const handler = (e) => {
-          // Fall back to composedPath if e.path is undefined
-          const path = e.path || (e.composedPath ? e.composedPath() : false) || getParents(e.target);
-          if (bubble || (path.length && !el.contains(path[0]) && el !== path[0])) {
-            binding.value(e);
-          }
-        };
-        el.__vueClickOutside__ = handler;
-        // add Event Listeners
-        document.addEventListener('click', handler);
-      },
-      unbind(el) {
-        // Remove Event Listeners
-        document.removeEventListener('click', el.__vueClickOutside__);
-        el.__vueClickOutside__ = null;
-      }
-    }
-  },
   props: {
     value: { type: String, default: '' },
     selectCountryLabel: { type: String, default: '' },
@@ -94,7 +53,7 @@ export default {
     disabledSelectCountry: { type: Boolean, default: false },
     mode: { type: String, default: '' },
     allCountries: { type: Array, default: () => allCountries },
-    defaultCountry: { type: String, default: '' },
+    defaultCountry: { type: String, default: 'br' },
     preferredCountries: { type: Array, default: () => [] },
     onlyCountries: { type: Array, default: () => [] },
     ignoredCountries: { type: Array, default: () => [] },
@@ -104,11 +63,6 @@ export default {
   data: () => ({
     phone: '',
     activeCountry: { iso2: '' },
-    open: false,
-    selectedIndex: null,
-    typeToFindInput: '',
-    typeToFindTimer: null,
-    cursorPosition: 0,
     countryCode: null
   }),
   computed: {
@@ -172,7 +126,6 @@ export default {
     }
   },
   watch: {
-    // eslint-disable-next-line func-names
     'phoneObject.valid': function(value) {
       if (value) this.phone = this.phoneText;
       this.$emit('validate', this.phoneObject);
@@ -180,25 +133,13 @@ export default {
     value() {
       this.phone = this.value;
     },
-    open(isDropdownOpened) {
-      // Emit open and close events
-      if (isDropdownOpened) this.$emit('open');
-      else this.$emit('close');
-    },
-    phone(newValue, oldValue) {
+    phone(newValue) {
       if (newValue) {
         if (newValue[0] === '+') {
           const code = PhoneNumber(newValue).getRegionCode();
           if (code) this.activeCountry = this.findCountry(code) || this.activeCountry;
         }
       }
-      // Reset the cursor to current position if it's not the last character.
-      if (oldValue && this.cursorPosition < oldValue.length) {
-        this.$nextTick(() => {
-          setCaretPosition(this.$refs.input, this.cursorPosition);
-        });
-      }
-
       this.$emit('input', this.phoneText, this.phoneObject);
     },
     activeCountry(value) {
@@ -229,8 +170,7 @@ export default {
           const activeCountry = PhoneNumber(this.phone).getRegionCode();
           if (activeCountry) {
             this.choose(activeCountry);
-            resolve();
-            return;
+            return resolve();
           }
         }
         /**
@@ -240,14 +180,11 @@ export default {
           const defaultCountry = this.findCountry(this.defaultCountry);
           if (defaultCountry) {
             this.choose(defaultCountry);
-            resolve();
-            return;
+            return resolve();
           }
         }
         const fallbackCountry = this.findCountry(this.preferredCountries[0]) || this.filteredCountries[0];
-        /**
-         * 3. Check if fetching country based on user's IP is allowed, set it as the default country
-         */
+
         if (!this.disabledFetchingCountry) {
           getCountry()
             .then((res) => {
@@ -255,18 +192,12 @@ export default {
             })
             .catch((error) => {
               console.warn(error);
-              /**
-               * 4. Use the first country from preferred list (if available) or all countries list
-               */
               this.choose(fallbackCountry);
             })
             .finally(() => resolve());
         } else {
-          /**
-           * 4. Use the first country from preferred list (if available) or all countries list
-           */
           this.choose(fallbackCountry);
-          resolve();
+          return resolve();
         }
       });
     },
@@ -278,16 +209,6 @@ export default {
     },
     findCountry(iso = '') {
       return this.allCountries.find((country) => country.iso2 === iso.toUpperCase());
-    },
-    getItemClass(index, iso2) {
-      const highlighted = this.selectedIndex === index;
-      const lastPreferred = index === this.preferredCountries.length - 1;
-      const preferred = this.preferredCountries.some((c) => c.toUpperCase() === iso2);
-      return {
-        highlighted,
-        'last-preferred': lastPreferred,
-        preferred
-      };
     },
     choose(country, toEmitInputEvent = false) {
       this.activeCountry = country || this.activeCountry || {};
@@ -302,80 +223,17 @@ export default {
       }
       if (toEmitInputEvent) this.$emit('input', this.phoneText, this.phoneObject);
     },
-    onInput(e) {
+    onInput() {
       // Returns response.number to assign it to v-model (if being used)
       // Returns full response for cases @input is used
       // and parent wants to return the whole response.
       this.$emit('input', this.phoneText, this.phoneObject);
-      // Keep the current cursor position just in case the input reformatted
-      // and it gets moved to the last character.
-      if (e && e.target) this.cursorPosition = e.target.selectionStart;
     },
     onChange(value) {
       if (value) this.$emit('change', value);
     },
     focus() {
       this.$refs.input.focus();
-    },
-    toggleDropdown() {
-      if (this.disabled) return;
-      this.open = !this.open;
-    },
-    clickedOutside() {
-      this.open = false;
-    },
-    keyboardNav(e) {
-      if (e.keyCode === 40) {
-        // down arrow
-        e.preventDefault();
-        this.open = true;
-
-        if (this.selectedIndex === null) this.selectedIndex = 0;
-        else this.selectedIndex = Math.min(this.sortedCountries.length - 1, this.selectedIndex + 1);
-
-        const selEle = this.$refs.list.children[this.selectedIndex];
-        if (selEle.offsetTop + selEle.clientHeight > this.$refs.list.scrollTop + this.$refs.list.clientHeight) {
-          this.$refs.list.scrollTop = selEle.offsetTop - this.$refs.list.clientHeight + selEle.clientHeight;
-        }
-      } else if (e.keyCode === 38) {
-        // up arrow
-        e.preventDefault();
-        this.open = true;
-
-        if (this.selectedIndex === null) this.selectedIndex = this.sortedCountries.length - 1;
-        else this.selectedIndex = Math.max(0, this.selectedIndex - 1);
-
-        const selEle = this.$refs.list.children[this.selectedIndex];
-        if (selEle.offsetTop < this.$refs.list.scrollTop) this.$refs.list.scrollTop = selEle.offsetTop;
-      } else if (e.keyCode === 13) {
-        // enter key
-        if (this.selectedIndex !== null) this.choose(this.sortedCountries[this.selectedIndex]);
-        this.open = !this.open;
-      } else {
-        // typing a country's name
-        this.typeToFindInput += e.key;
-        clearTimeout(this.typeToFindTimer);
-        this.typeToFindTimer = setTimeout(() => {
-          this.typeToFindInput = '';
-        }, 700);
-        // don't include preferred countries so we jump to the right place in the alphabet
-        const typedCountryI = this.sortedCountries
-          .slice(this.preferredCountries.length)
-          .findIndex((c) => c.name.toLowerCase().startsWith(this.typeToFindInput));
-        if (typedCountryI >= 0) {
-          this.selectedIndex = this.preferredCountries.length + typedCountryI;
-          const selEle = this.$refs.list.children[this.selectedIndex];
-          const needToScrollTop = selEle.offsetTop < this.$refs.list.scrollTop;
-          const needToScrollBottom =
-            selEle.offsetTop + selEle.clientHeight > this.$refs.list.scrollTop + this.$refs.list.clientHeight;
-          if (needToScrollTop || needToScrollBottom)
-            this.$refs.list.scrollTop = selEle.offsetTop - this.$refs.list.clientHeight / 2;
-        }
-      }
-    },
-    reset() {
-      this.selectedIndex = this.sortedCountries.map((c) => c.iso2).indexOf(this.activeCountry.iso2);
-      this.open = false;
     },
     onChangeCountryCode() {
       this.choose(this.countryCode, true);
